@@ -7,8 +7,8 @@ import java.util
 
 object GraphGeneratorMain {
   def main(args: Array[String]): Unit = {
-    val edgeCount = 1e9.toInt / 1000
-    val vertexCount = 1e7.toInt / 1000
+    val edgeCount = 1e4.toInt
+    val vertexCount = 1e3.toInt
     val batchSize = 1000
 
     val graphWriter = new PrintWriter(Files.newBufferedWriter(Paths.get("graph.edges"), TRUNCATE_EXISTING, CREATE))
