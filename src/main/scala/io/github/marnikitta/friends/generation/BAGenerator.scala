@@ -1,5 +1,7 @@
 package io.github.marnikitta.friends.generation
 
+import io.github.marnikitta.friends.VertexId
+
 class BAGenerator(seed: Long) {
   val rd = new FastRandom(seed)
 
@@ -15,7 +17,7 @@ class BAGenerator(seed: Long) {
     * @param edgeConsumer consumer of created links, rare duplicates are possible
     * @return an array of vertices degrees, size of the array equals to the vertexCount
     */
-  def generate(vertexCount: Int, edgeCount: Int, edgeConsumer: ((Int, Int)) => Unit): Array[Int] = {
+  def generate(vertexCount: Int, edgeCount: Int, edgeConsumer: ((VertexId, VertexId)) => Unit): Array[Int] = {
     require(edgeCount > vertexCount, {
       "Expected number of edges should be greater then the number of vertices"
     })
@@ -44,7 +46,7 @@ class BAGenerator(seed: Long) {
     * @param edgeConsumer  consumer of the generated edges
     * @see <a href="https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model">Barabási–Albert model</a>
     */
-  private def BA(vertexCount: Int, m0: Int, m: Int, vertexDegrees: Array[Int], edgeConsumer: ((Int, Int)) => Unit): Unit = {
+  private def BA(vertexCount: Int, m0: Int, m: Int, vertexDegrees: Array[Int], edgeConsumer: ((VertexId, VertexId)) => Unit): Unit = {
     require(m <= m0)
     var maxDegree = vertexDegrees.max
 
