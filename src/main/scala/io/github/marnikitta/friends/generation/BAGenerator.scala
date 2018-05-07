@@ -1,4 +1,4 @@
-package io.github.marnikitta.friends
+package io.github.marnikitta.friends.generation
 
 class BAGenerator(seed: Long) {
   val rd = new FastRandom(seed)

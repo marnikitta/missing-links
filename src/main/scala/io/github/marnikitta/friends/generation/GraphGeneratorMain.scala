@@ -1,4 +1,4 @@
-package io.github.marnikitta.friends
+package io.github.marnikitta.friends.generation
 
 import java.io.PrintWriter
 import java.nio.file.StandardOpenOption._
@@ -7,8 +7,8 @@ import java.util
 
 object GraphGeneratorMain {
   def main(args: Array[String]): Unit = {
-    val edgeCount = 1e4.toInt
-    val vertexCount = 1e3.toInt
+    val edgeCount = 1e5.toInt
+    val vertexCount = 1e4.toInt
     val batchSize = 1000
 
     val graphWriter = new PrintWriter(Files.newBufferedWriter(Paths.get("graph.edges"), TRUNCATE_EXISTING, CREATE))

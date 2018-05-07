@@ -1,4 +1,4 @@
-package io.github.marnikitta.friends
+package io.github.marnikitta.friends.generation
 
 class FastRandom(seed: Long) {
   var u: Long = 0

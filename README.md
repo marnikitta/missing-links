@@ -10,6 +10,10 @@
 - [ ] Сжать списки ребер с CSR + delta encoding. Положить индекс в каждый чанк
 - [ ] Отрефакторить код, чтобы можно было считать линейные комбинации
 
+#### Related papers
+
+- [Map-Reduce based Link Prediction for Large Scale Social Network](https://ksiresearchorg.ipage.com/seke/seke17paper/seke17paper_100.pdf)
+
 #### Graph Generation
 
 Наивная реализация алгоритма BA работает за O(n^2), где n - кол-во вершин в генерируемом графе.
