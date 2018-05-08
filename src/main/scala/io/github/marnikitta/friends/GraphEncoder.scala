@@ -1,6 +1,5 @@
-package io.github.marnikitta.friends.generation
+package io.github.marnikitta.friends
 
-import io.github.marnikitta.friends.{AdjList, VertexId}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
