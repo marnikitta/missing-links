@@ -22,7 +22,7 @@ object SecondCirclePassFriends extends SecondCircleFinder {
       .filter({ case (_, second) => second.nonEmpty })
   }
 
-  case class FriendsReducer(friends: Option[Set[VertexId]], secondFriends: Set[VertexId]) {
+  private case class FriendsReducer(friends: Option[Set[VertexId]], secondFriends: Set[VertexId]) {
     def reduce(that: FriendsReducer): FriendsReducer = {
       if (friends.isDefined || that.friends.isDefined) {
         val f = friends.orElse(that.friends).get
@@ -70,8 +70,8 @@ object Test {
       .mapValues(_.sorted)
     val start = System.nanoTime()
 
-    val secondCircle = SecondCirclePassTriples.apply(graph)
+    val secondCircle = SecondCirclePassTriples.apply(graph).foreach(println(_))
 
-    AdamicAdar.apply(graph, secondCircle).foreach(println(_))
+//    AdamicAdar.apply(graph, secondCircle).foreach(println(_))
   }
 }
