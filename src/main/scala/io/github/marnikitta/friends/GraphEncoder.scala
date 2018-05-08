@@ -1,7 +1,6 @@
 package io.github.marnikitta.friends
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.collection.mutable
 
@@ -55,30 +54,5 @@ object GraphDecoder extends (RDD[String] => RDD[AdjList]) {
         }
         (from, friends.result())
       })
-  }
-}
-
-object EncoderMain {
-  def main(args: Array[String]): Unit = {
-    val conf = new SparkConf().setMaster("local[1]").setAppName("SecondCircle")
-    val sc = new SparkContext(conf)
-
-    val graph = sc.textFile("graph.edges")
-      .map(line => {
-        val edges = line.split(" ").map(_.trim.toInt)
-        val a = edges(0)
-        val b = edges(1)
-        (a, Set(b))
-      })
-      .reduceByKey({ case (e1, e2) => e1 ++ e2 })
-      .mapValues(_.toArray.sorted)
-
-    val canonicalGraph = GraphCanonizer.apply(graph)
-
-    GraphEncoder.apply(canonicalGraph).saveAsTextFile("graph.delta")
-
-    val canonicalDecodedGraph = GraphDecoder.apply(sc.textFile("graph.delta"))
-
-    assert(canonicalDecodedGraph.collectAsMap().mapValues(_.toList) == canonicalGraph.collectAsMap().mapValues(_.toList))
   }
 }

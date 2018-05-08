@@ -1,9 +1,7 @@
 package io.github.marnikitta.friends.circle
 
-import io.github.marnikitta.friends.metric.AdamicAdar
 import io.github.marnikitta.friends.{AdjList, SecondCircleFinder, VertexId}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.{SparkConf, SparkContext}
 
 object SecondCirclePassFriends extends SecondCircleFinder {
   override def apply(in: RDD[AdjList]): RDD[(VertexId, Set[VertexId])] = {
@@ -51,27 +49,5 @@ object SecondCirclePassTriples extends SecondCircleFinder {
     vTriples.subtract(edges)
       .flatMap({ case (a, b) => Seq((a, Set(b)), (b, Set(a))) })
       .reduceByKey({ case (s1, s2) => (s1 ++ s2).take(500) })
-  }
-}
-
-object Test {
-  def main(args: Array[String]): Unit = {
-    val conf = new SparkConf().setMaster("local[1]").setAppName("SecondCircle")
-    val sc = new SparkContext(conf)
-
-    val graph = sc.textFile("graph.edges")
-      .flatMap(line => {
-        val edges = line.split(" ").map(_.trim.toInt)
-        val a = edges(0)
-        val b = edges(1)
-        Seq((a, Array(b)), (b, Array(a)))
-      })
-      .reduceByKey({ case (e1, e2) => e1 ++ e2 })
-      .mapValues(_.sorted)
-    val start = System.nanoTime()
-
-    val secondCircle = SecondCirclePassTriples.apply(graph).foreach(println(_))
-
-//    AdamicAdar.apply(graph, secondCircle).foreach(println(_))
   }
 }
