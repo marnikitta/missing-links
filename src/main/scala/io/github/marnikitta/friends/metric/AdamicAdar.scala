@@ -9,18 +9,18 @@ object AdamicAdar extends MetricEvaluator {
     graph.cache()
     // Is collected to memory (about 8MB) to be closed into Spark job (send to each worker)
     // I guess it should work with remote master too
-    val coefs = graph.mapValues(_.length).collectAsMap().mapValues(d => 1 / Math.log(d)).toMap
+    val coefs = graph.mapValues(tos => 1 / Math.log(tos.length)).collectAsMap()
 
-    val metricRequests: RDD[(VertexId, VertexId)] = graph.flatMap({ case (a, bs) => bs.map(b => (a, b)) })
+    val metricRequests: RDD[(VertexId, VertexId)] = graph.flatMap({ case (from, tos) => tos.map(to => (to, from)) })
 
-    val withNeighbors: RDD[(AdjList, AdjList)] = metricRequests
-      .join(graph).map({ case (a, (b, aNeighbors)) => (b, (a, aNeighbors)) })
-      .join(graph).map({ case (b, (aWithN, bNeigh)) => (aWithN, (b, bNeigh)) })
+    val withFriends: RDD[(AdjList, AdjList)] = metricRequests
+      .join(graph).map({ case (to, (from, toFriends)) => (from, (to, toFriends)) })
+      .join(graph).map({ case (from, (toWithFriends, fromFriends)) => ((from, fromFriends), toWithFriends) })
 
-    val abWithMetric: RDD[(VertexId, Map[VertexId, Double])] = withNeighbors
-      .map({ case ((a, aNeigh), (b, bNeigh)) => (a, Map(b -> aNeigh.intersect(bNeigh).map(coefs(_)).sum)) })
+    val withMetric: RDD[(VertexId, Map[VertexId, Double])] = withFriends
+      .map({ case ((from, fromFriends), (to, toFriends)) => (from, Map(to -> fromFriends.intersect(toFriends).map(coefs(_)).sum)) })
 
-    abWithMetric.reduceByKey((metrics1, metrics2) => metrics1 ++ metrics2)
+    withMetric.reduceByKey((metrics1, metrics2) => metrics1 ++ metrics2)
   }
 }
 

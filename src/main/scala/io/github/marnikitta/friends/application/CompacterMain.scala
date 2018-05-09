@@ -8,7 +8,7 @@ object CompacterMain {
     val srcFileName =  "graph.edges"
     val dstFileName = "graph.delta"
 
-    val conf = new SparkConf().setMaster("local[1]").setAppName("SecondCircle")
+    val conf = new SparkConf().setMaster("local[1]").setAppName("Compacter")
     val sc = new SparkContext(conf)
 
 

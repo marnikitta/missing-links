@@ -9,8 +9,8 @@ import io.github.marnikitta.friends.generation.BAGenerator
 
 object GeneratorMain {
   def main(args: Array[String]): Unit = {
-    val edgeCount = 1e4.toInt
-    val vertexCount = 1e3.toInt
+    val edgeCount = 1e7.toInt
+    val vertexCount = 1e5.toInt
     val batchSize = 1000
 
     val graphWriter = new PrintWriter(Files.newBufferedWriter(Paths.get("graph.edges"), TRUNCATE_EXISTING, CREATE))
