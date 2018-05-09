@@ -1,5 +1,7 @@
 package io.github.marnikitta.friends.generation
 
+import java.util.concurrent.TimeUnit
+
 import io.github.marnikitta.friends.VertexId
 
 class BAGenerator(seed: Long) {
@@ -47,6 +49,7 @@ class BAGenerator(seed: Long) {
     * @see <a href="https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model">Barabási–Albert model</a>
     */
   private def BA(vertexCount: Int, m0: Int, m: Int, vertexDegrees: Array[Int], edgeConsumer: ((VertexId, VertexId)) => Unit): Unit = {
+    val start = System.nanoTime()
     require(m <= m0)
     var maxDegree = vertexDegrees.max
 
@@ -65,6 +68,9 @@ class BAGenerator(seed: Long) {
             maxDegree = vertexDegrees(potentialVertex)
           }
         }
+      }
+      if (newVertex % 10000 == 0) {
+        println(TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - start) + ":" + newVertex)
       }
     }
   }

@@ -34,7 +34,7 @@ class FastRandom(seed: Long) {
     ret
   }
 
-  def nextInt(bound: Int): Int = positiveModulo(nextLong().asInstanceOf[Int], bound)
+  def nextInt(bound: Int): Int = positiveModulo(nextLong().toInt, bound)
 
   private def positiveModulo(i: Int, n: Int): Int = (i % n + n) % n
 }

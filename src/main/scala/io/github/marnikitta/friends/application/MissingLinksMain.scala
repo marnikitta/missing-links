@@ -1,9 +1,7 @@
 package io.github.marnikitta.friends.application
 
-import io.github.marnikitta.friends.circle.SecondCirclePassFriends
-import io.github.marnikitta.friends.metric.AdamicAdar
-import io.github.marnikitta.friends.{GraphDecanonizer, GraphDecoder, VertexId}
-import org.apache.spark.rdd.RDD
+import io.github.marnikitta.friends._
+import io.github.marnikitta.friends.metric.{AdamicAdar, MissingLinks}
 import org.apache.spark.{SparkConf, SparkContext}
 
 object MissingLinksMain {
@@ -15,12 +13,15 @@ object MissingLinksMain {
     val canonicalGraph = GraphDecoder.apply(sc.textFile("graph.delta"))
     val decanonizedGraph = GraphDecanonizer.apply(canonicalGraph)
 
-    val secondCircle = new SecondCirclePassFriends().apply(decanonizedGraph)
+    val degrees = decanonizedGraph.mapValues(_.length).collectAsMap().toMap
 
-    val missingLinkMetrics: RDD[(VertexId, Map[VertexId, Double])] = AdamicAdar.apply(decanonizedGraph, secondCircle)
+    val adamicAdar = AdamicAdar(degrees)
 
-    missingLinkMetrics.mapValues(m => m.toList.sortBy(-_._2)).map({ case (from, metrics) =>
-      from + " " + metrics.map({ case (v, metric) => v + ":" + metric }).mkString(" ")
-    }).saveAsTextFile("graph.metrics")
+    new MissingLinks(adamicAdar).apply(decanonizedGraph)
+      .mapValues(m => m.toList.sortBy(-_._2))
+      .map({ case (from, metrics) =>
+        from + " " + metrics.map({ case (v, metric) => v + ":" + metric }).mkString(" ")
+      })
+      .saveAsTextFile("graph.metrics")
   }
 }
