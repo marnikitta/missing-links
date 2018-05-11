@@ -5,7 +5,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 object CompacterMain {
   def main(args: Array[String]): Unit = {
-    val srcFileName =  "graph.edges"
+    val srcFileName = "graph.edges"
     val dstFileName = "graph.delta"
 
     val conf = new SparkConf().setMaster("local[1]").setAppName("Compacter")
@@ -19,8 +19,8 @@ object CompacterMain {
         val b = edges(1)
         (a, Set(b))
       })
-      .reduceByKey({ case (e1, e2) => e1 ++ e2 })
-      .mapValues(_.toArray.sorted)
+      .reduceByKey(_ ++ _)
+      .mapValues(_.toArray)
 
     val canonicalGraph = GraphCanonizer.apply(graph)
 

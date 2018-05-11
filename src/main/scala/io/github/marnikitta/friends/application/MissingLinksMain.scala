@@ -18,9 +18,9 @@ object MissingLinksMain {
     val adamicAdar = AdamicAdar(degrees)
 
     new MissingLinks(adamicAdar).apply(decanonizedGraph)
-      .mapValues(m => m.toList.sortBy(-_._2))
-      .map({ case (from, metrics) =>
-        from + " " + metrics.map({ case (v, metric) => v + ":" + metric }).mkString(" ")
+      .mapValues(m => m.map(_._1))
+      .map({ case (from, secondCircle) =>
+        from + " " + secondCircle.mkString(" ")
       })
       .saveAsTextFile("graph.metrics")
   }

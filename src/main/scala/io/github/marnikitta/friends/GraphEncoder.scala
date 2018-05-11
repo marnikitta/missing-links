@@ -2,15 +2,15 @@ package io.github.marnikitta.friends
 
 import org.apache.spark.rdd.RDD
 
-import scala.collection.mutable
+import scala.collection.{SortedSet, mutable}
 
 object GraphCanonizer extends (RDD[AdjList] => RDD[AdjList]) {
   override def apply(adjLists: RDD[AdjList]): RDD[AdjList] = {
     adjLists
       .flatMapValues(a => a)
-      .map({ case (from: VertexId, to: VertexId) => (Math.min(from, to), Set(Math.max(from, to))) })
-      .reduceByKey({ case (a, b) => a ++ b })
-      .mapValues(_.toArray.sorted)
+      .map({ case (from: VertexId, to: VertexId) => (Math.min(from, to), SortedSet(Math.max(from, to))) })
+      .reduceByKey(_ ++ _)
+      .mapValues(_.toArray)
   }
 }
 
@@ -18,9 +18,9 @@ object GraphDecanonizer extends (RDD[AdjList] => RDD[AdjList]) {
   override def apply(adjLists: RDD[AdjList]): RDD[AdjList] = {
     adjLists
       .flatMapValues(a => a)
-      .flatMap({ case (from: VertexId, to: VertexId) => Iterator((from, Set(to)), (to, Set(from))) })
-      .reduceByKey({ case (a, b) => a ++ b })
-      .mapValues(_.toArray.sorted)
+      .flatMap({ case (from: VertexId, to: VertexId) => Iterator((from, SortedSet(to)), (to, SortedSet(from))) })
+      .reduceByKey(_ ++_)
+      .mapValues(_.toArray)
   }
 }
 
